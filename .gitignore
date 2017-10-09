@@ -1,0 +1,18 @@
+# IDEs and editors
+.idea
+.project
+.classpath
+.c9
+.vscode
+.settings
+
+# work files
+*.log
+tmp
+
+# java / maven
+*.class
+*.jar
+*.war
+*.ear
+target
