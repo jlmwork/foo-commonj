@@ -59,7 +59,7 @@ public final class FooWorkManagerFactory extends AbstractFactory {
 		    
 		    // get config values
 		    Reference ref = (Reference) obj;
-		    Enumeration addrs = ref.getAll();
+		    Enumeration<RefAddr> addrs = ref.getAll();
 		    while (addrs.hasMoreElements()) {
 		    	RefAddr addr = (RefAddr) addrs.nextElement();
 		    	String addrName = addr.getType();
