@@ -23,6 +23,8 @@ public abstract class AbstractFactory implements ObjectFactory {
 	public static final String CONFIG_MIN_THREADS = "minThreads";
 	/** length of the queue */
 	public static final String CONFIG_QUEUE_LENGTH = "queueLength";
+	/** length of the queue */
+	public static final int MAX_ALLOWED_VALUE = Integer.MAX_VALUE;
 	
 	protected Map<Name, AbstractManager> managers = new Hashtable<Name, AbstractManager>();
 	
@@ -41,11 +43,10 @@ public abstract class AbstractFactory implements ObjectFactory {
 		catch (NumberFormatException e) {
 			throw new NamingException("Value " + name + " must be an integer.");
 		}
-		if (x < 0 || x > 100) {
-			throw new NamingException("Value " + name + " out of range [0..100]");
+		if (x < 0 || x > MAX_ALLOWED_VALUE) {
+			throw new NamingException("Value " + name + " out of range [0.." + MAX_ALLOWED_VALUE + "]");
 		}
 		return x;
 	}
-
 
 }
