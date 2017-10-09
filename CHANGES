@@ -1,0 +1,39 @@
+Foo-commonj Change Log
+
+Release 1.0.1 2006-08-31
+========================
+
+Bug fixes
+1. Finalizer code moved to managers since they got called on the manager
+   factory in Tomcat 5.x.
+2. Throwing WorkExcpetion rather than a RuntimeException when thread pool 
+   is blocked.
+
+New features
+1. ManagedConnectionFactory to allow the deployment as a JCA resource 
+   adapter.
+
+
+
+Release 1.0 2006-08-16
+======================
+
+New features
+1. Implementation of the Timer part of the JSR 237 spec.
+
+
+
+Release 0.1.1 2006-08-12
+========================
+
+Bug fixes
+1. Daemons exceute in thier own thread now.
+
+
+
+Release 0.1 2006-08-06
+======================
+
+New features
+1. Implementation of the WorkManager part of the JSR 237 spec.
+
