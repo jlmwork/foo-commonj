@@ -30,13 +30,13 @@ public final class FixedRateTimer extends FooTimer {
 	 */
 	protected void computeNextExecutionTime() {
 		long currentTime = System.currentTimeMillis();
-		long execTime = scheduledExcecutionTime + period;
+		long execTime = scheduledExecutionTime + period;
 		
 		while (execTime <= currentTime) {
 			execTime += period;
 		}
 		
-		scheduledExcecutionTime = execTime;
+		scheduledExecutionTime = execTime;
 	}
 
 }

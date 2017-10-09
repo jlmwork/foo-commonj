@@ -29,7 +29,7 @@ public final class FixedDelayTimer extends FooTimer {
 	 * @see de.myfoo.commonj.timers.FooTimer#computeNextExecutionTime()
 	 */
 	protected void computeNextExecutionTime() {
-		scheduledExcecutionTime = System.currentTimeMillis() + period;
+		scheduledExecutionTime = System.currentTimeMillis() + period;
 	}
 
 }

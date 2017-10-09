@@ -19,7 +19,7 @@ public abstract class FooTimer implements Timer {
 	
 	protected boolean stopped = false;
 	private boolean cancelled = false;
-	protected long scheduledExcecutionTime;
+	protected long scheduledExecutionTime;
 	protected long period = 0L;
 	private TimerListener listener;
 	
@@ -31,7 +31,7 @@ public abstract class FooTimer implements Timer {
 	 * @param listener the timer listener for this timer.
 	 */
 	public FooTimer(long startTime, long period, TimerListener listener) {
-		scheduledExcecutionTime = startTime;
+		scheduledExecutionTime = startTime;
 		this.period = period;
 		this.listener = listener;
 	}
@@ -114,7 +114,7 @@ public abstract class FooTimer implements Timer {
 		if (stopped) {
 			throw new IllegalStateException("Timer has already been stopped.");
 		}
-		return scheduledExcecutionTime;
+		return scheduledExecutionTime;
 	}
 
 	/**
@@ -153,7 +153,7 @@ public abstract class FooTimer implements Timer {
 	 * @return <code>true</code> if timer is expired.
 	 */
 	public boolean isExpired() {
-		return scheduledExcecutionTime >= System.currentTimeMillis();
+		return scheduledExecutionTime >= System.currentTimeMillis();
 	}
 
 }

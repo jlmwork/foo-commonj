@@ -22,7 +22,7 @@ public abstract class AbstractFactory implements ObjectFactory {
 	/** min number of threads in the pool */
 	public static final String CONFIG_MIN_THREADS = "minThreads";
 	/** length of the queue */
-	public static final String CONFIG_QUEUE_LENGTH = "queueLenght";
+	public static final String CONFIG_QUEUE_LENGTH = "queueLength";
 	
 	protected Map<Name, AbstractManager> managers = new Hashtable<Name, AbstractManager>();
 	
