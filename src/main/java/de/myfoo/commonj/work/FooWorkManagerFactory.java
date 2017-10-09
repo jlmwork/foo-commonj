@@ -46,7 +46,7 @@ public final class FooWorkManagerFactory extends AbstractFactory {
 	 * 				factories are to be tried.
 	 */
 	public Object getObjectInstance(Object obj, Name name, Context nameCtx, 
-			Hashtable environment) throws Exception {
+			Hashtable<?,?> environment) throws Exception {
 		
 		// get work manager from map
 		FooWorkManager workManager = (FooWorkManager) managers.get(name);
