@@ -13,9 +13,9 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Andreas Keldenich
  */
-public final class ThreadPool {
+public final class ThreadPool implements ThreadPoolMBean {
 
-	private ThreadPoolExecutor pool;
+	private ThreadPoolExecutor poolExecutor;
 	
 	private int queueLength = 20;
 	
@@ -28,7 +28,7 @@ public final class ThreadPool {
 	 */
 	public ThreadPool(int minThreads, int maxThreads, int queueLength) {
 		this.queueLength = queueLength;
-		pool = new ThreadPoolExecutor(minThreads, maxThreads, 
+		poolExecutor = new ThreadPoolExecutor(minThreads, maxThreads, 
 				20, TimeUnit.SECONDS, 
 				new ArrayBlockingQueue<Runnable>(queueLength),
 				new ThreadPoolExecutor.CallerRunsPolicy());
@@ -37,45 +37,79 @@ public final class ThreadPool {
 	/**
 	 * @return the coreThreads
 	 */
+	public int getMinThreads() {
+		return poolExecutor.getCorePoolSize();
+	}
+
+	/**
+	 * @return the coreThreads
+	 */
 	public int getCoreThreads() {
-		return pool.getCorePoolSize();
+		return poolExecutor.getCorePoolSize();
 	}
 
 	/**
 	 * @param coreThreads the coreThreads to set
 	 */
 	public void setCoreThreads(int coreThreads) {
-		pool.setCorePoolSize(coreThreads);
+		poolExecutor.setCorePoolSize(coreThreads);
 	}
 
 	/**
 	 * @return the maxThreads
 	 */
 	public int getMaxThreads() {
-		return pool.getMaximumPoolSize();
+		return poolExecutor.getMaximumPoolSize();
 	}
 
 	/**
 	 * @param maxThreads the maxThreads to set
 	 */
 	public void setMaxThreads(int maxThreads) {
-		pool.setMaximumPoolSize(maxThreads);
+		poolExecutor.setMaximumPoolSize(maxThreads);
 	}
 
 	/**
 	 * @return the queueLength
 	 */
 	public int getQueueLength() {
-		return queueLength;
+		return poolExecutor.getQueue().size() + poolExecutor.getQueue().remainingCapacity();
 	}
 
 	/**
-	 * @param queueLength the queueLength to set
-	 */
-	public void setQueueLength(int queueLength) {
-		this.queueLength = queueLength;
+     * Returns the number of enqueued tasks.
+     */
+    public int getQueueSize() {
+		return this.poolExecutor.getQueue().size();
 	}
 
+    /**
+     * Returns the approximate number of threads that are actively executing tasks.
+     */
+    public int getActiveCount() {
+		return this.poolExecutor.getActiveCount();
+	}
+
+    /**
+     * Returns the approximate total number of tasks that have completed execution.
+     */
+    public long getCompletedTaskCount() {
+		return this.poolExecutor.getCompletedTaskCount();
+	}
+
+    /**
+     * Returns the approximate total number of tasks that have ever been scheduled for execution. Because the * states of tasks and threads may change dynamically during computation, the returned value is only an approximation.
+     */
+    public long getTaskCount() {
+		return this.poolExecutor.getTaskCount();
+	}
+
+    /**
+     * Returns the policy used in case of unexecutable tasks.
+     */
+    public String getRejectionPolicy() {
+		return this.poolExecutor.getRejectedExecutionHandler().getClass().getName();
+	}
 
 	/**
 	 * Arrange for the given command to be executed by a thread in this
@@ -86,21 +120,21 @@ public final class ThreadPool {
 	 * @throws InterruptedException if execution fails
 	 */
 	public void execute(Runnable command) throws InterruptedException {
-		pool.execute(command);
+		poolExecutor.execute(command);
 	}
 	
 	/**
 	 * Shutdown the pool after processing the currently queue tasks.
 	 */
 	public void shutdown() {
-		pool.shutdown();
+		poolExecutor.shutdown();
 	}
 
 	/**
 	 * Force shutdown the pool immediately.
 	 */
 	public void forceShutdown() {
-		pool.shutdownNow();
+		poolExecutor.shutdownNow();
 	}
 
 }

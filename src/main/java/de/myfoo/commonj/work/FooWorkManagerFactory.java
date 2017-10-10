@@ -3,6 +3,16 @@
  */
 package de.myfoo.commonj.work;
 
+import java.lang.management.ManagementFactory;
+
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+import javax.management.ObjectName;
+
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -15,8 +25,8 @@ import javax.naming.Reference;
 import commonj.work.WorkManager;
 
 import de.myfoo.commonj.util.AbstractFactory;
+import de.myfoo.commonj.util.ThreadPoolMBean;
 import de.myfoo.commonj.util.ThreadPool;
-
 
 /**
  * Factory class for <code>WorkManager</code>s. 
@@ -83,8 +93,8 @@ public final class FooWorkManagerFactory extends AbstractFactory {
 		    if (minThreads < 1) {
 		    	throw new NamingException("minThreads can not be < 1.");
 		    }
-		    if (minThreads >= maxThreads) {
-		    	throw new NamingException("minThreads can not be >= maxThreads.");
+		    if (minThreads > maxThreads) {
+		    	throw new NamingException("minThreads can not be > maxThreads.");
 		    }
 		    
 		    // create the thread pool for this work manager
@@ -93,9 +103,28 @@ public final class FooWorkManagerFactory extends AbstractFactory {
 		    // create the work manager
 		    workManager = new FooWorkManager(pool, maxDaemons);
 		    managers.put(name, workManager);
+			registerMBean(name.toString(), pool);
 		}
 		
 		return (WorkManager) workManager;
+	}
+
+	private void registerMBean(String name, ThreadPoolMBean object) {
+		final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        System.out.println("MBean to register: " + name);
+        try {
+            ObjectName objectName = new ObjectName("commonj.work:type=ThreadPool, name=" + name);
+            server.registerMBean(object, objectName);
+            System.out.println("MBean registered: " + objectName);
+        } catch (MalformedObjectNameException mone) {
+            mone.printStackTrace();
+        } catch (InstanceAlreadyExistsException iaee) {
+            iaee.printStackTrace();
+        } catch (MBeanRegistrationException mbre) {
+            mbre.printStackTrace();
+        } catch (NotCompliantMBeanException ncmbe) {
+            ncmbe.printStackTrace();
+        }
 	}
 
 }
