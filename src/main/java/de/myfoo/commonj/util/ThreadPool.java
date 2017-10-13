@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class ThreadPool implements ThreadPoolMBean {
 
-	private ThreadPoolExecutor poolExecutor;
+	private InstrumentedThreadPoolExecutor poolExecutor;
 	
 	private int queueLength = 20;
 	
@@ -28,7 +28,7 @@ public final class ThreadPool implements ThreadPoolMBean {
 	 */
 	public ThreadPool(int minThreads, int maxThreads, int queueLength) {
 		this.queueLength = queueLength;
-		poolExecutor = new ThreadPoolExecutor(minThreads, maxThreads, 
+		poolExecutor = new InstrumentedThreadPoolExecutor(minThreads, maxThreads, 
 				20, TimeUnit.SECONDS, 
 				new ArrayBlockingQueue<Runnable>(queueLength),
 				new ThreadPoolExecutor.CallerRunsPolicy());
@@ -137,4 +137,46 @@ public final class ThreadPool implements ThreadPoolMBean {
 		poolExecutor.shutdownNow();
 	}
 
+	long fromNanoToSeconds(long nanos) {
+		return TimeUnit.NANOSECONDS.toSeconds(nanos);
+	}
+
+	@Override
+	public double getRequestPerSecondRetirementRate() {
+		return (double) poolExecutor.getNumberOfRequestsRetired()
+				/ fromNanoToSeconds(poolExecutor.getAggregateInterRequestArrivalTime());
+	}
+
+	@Override
+	public double getAverageServiceTime() {
+		return fromNanoToSeconds(poolExecutor.getTotalServiceTime())
+				/ (double) poolExecutor.getNumberOfRequestsRetired();
+	}
+
+	@Override
+	public double getAverageTimeWaitingInPool() {
+		return fromNanoToSeconds(poolExecutor.getTotalPoolTime())
+				/ (double) poolExecutor.getNumberOfRequestsRetired();
+	}
+
+	@Override
+	public double getAverageResponseTime() {
+		return this.getAverageServiceTime() + this.getAverageTimeWaitingInPool();
+	}
+
+	@Override
+	public double getEstimatedAverageNumberOfActiveRequests() {
+		return getRequestPerSecondRetirementRate() * (getAverageServiceTime() + getAverageTimeWaitingInPool());
+	}
+
+	@Override
+	public double getRatioOfDeadTimeToResponseTime() {
+		double poolTime = (double) poolExecutor.getTotalPoolTime();
+		return poolTime / (poolTime + (double) poolExecutor.getTotalServiceTime());
+	}
+
+	@Override
+	public double v() {
+		return getEstimatedAverageNumberOfActiveRequests() / (double) Runtime.getRuntime().availableProcessors();
+	}
 }

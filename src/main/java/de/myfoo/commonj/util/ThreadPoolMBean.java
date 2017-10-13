@@ -67,4 +67,18 @@ public interface ThreadPoolMBean {
      * Returns the policy used in case of unexecutable tasks.
      */
     String getRejectionPolicy();
+
+    double getRequestPerSecondRetirementRate();
+
+	double getAverageServiceTime();
+
+	double getAverageTimeWaitingInPool();
+
+	double getAverageResponseTime();
+
+	double getEstimatedAverageNumberOfActiveRequests();
+
+	double getRatioOfDeadTimeToResponseTime();
+
+	double v();
 }
